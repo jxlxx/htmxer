@@ -1,0 +1,17 @@
+package htmxer
+
+templ baseLayout(title string) {
+  <html>
+    <head>
+      <title>HTMXer | { title } </title>
+      <script src="/static/htmx.js"></script>
+      <script src="/static/tailwind.js"></script>
+      <link  href="/static/site.css" rel="stylesheet"></link>
+    </head>
+    <body>
+      @header()
+      { children... }
+      @footer()
+    </body>
+  </html>
+}

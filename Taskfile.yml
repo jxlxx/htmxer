@@ -1,0 +1,38 @@
+# https://taskfile.dev
+
+version: '3'
+
+env: 
+  TAILWIND_VERSION: "3.4.1"
+  HTMX_VERSION: "1.9.10"
+
+tasks:
+  gen:
+    deps: [api, templ, vendor]
+  api:
+    cmds:
+      - oapi-codegen -generate chi-server,spec,types -package htmxer openapi.yaml > server.gen.go
+    sources:
+      - openapi.yaml
+    generates:
+      - server.gen.go
+
+  templ:
+    cmds:
+      - templ generate
+    sources:
+      - "*.templ"
+    generates:
+      - "*_templ.go"
+      
+  run:
+    cmds: 
+      - air
+
+  vendor:
+    cmds:
+      - wget -O static/tailwind.js "https://cdn.tailwindcss.com/{{ .TAILWIND_VERSION }}"
+      - wget -O static/htmx.js "https://unpkg.com/htmx.org@{{ .HTMX_VERSION }}"
+    generates:
+      - static/tailwind.js
+      - static/htmx.js

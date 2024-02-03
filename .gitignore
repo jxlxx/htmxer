@@ -1,0 +1,5 @@
+dist
+bin
+.env
+.task
+.tmp

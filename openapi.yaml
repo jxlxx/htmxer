@@ -1,0 +1,11 @@
+openapi: '3.0.2'
+
+
+paths:
+  /:
+    get: 
+      operationId: HomePage
+
+    
+components:
+  schemas:

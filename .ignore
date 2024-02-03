@@ -1,0 +1,5 @@
+!.ignore
+!.gitignore
+!.goreleaser.yaml
+!.air.toml
+*_templ.go
