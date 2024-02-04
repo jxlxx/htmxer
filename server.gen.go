@@ -40,6 +40,9 @@ type ServerInterface interface {
 	// (POST /users)
 	PostUser(w http.ResponseWriter, r *http.Request)
 
+	// (GET /users/new)
+	NewUser(w http.ResponseWriter, r *http.Request)
+
 	// (DELETE /users/{id})
 	DeleteUser(w http.ResponseWriter, r *http.Request, id string)
 
@@ -72,6 +75,11 @@ func (_ Unimplemented) UserListPage(w http.ResponseWriter, r *http.Request) {
 
 // (POST /users)
 func (_ Unimplemented) PostUser(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /users/new)
+func (_ Unimplemented) NewUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -145,6 +153,21 @@ func (siw *ServerInterfaceWrapper) PostUser(w http.ResponseWriter, r *http.Reque
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostUser(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// NewUser operation middleware
+func (siw *ServerInterfaceWrapper) NewUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.NewUser(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -407,6 +430,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/users", wrapper.PostUser)
 	})
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/users/new", wrapper.NewUser)
+	})
+	r.Group(func(r chi.Router) {
 		r.Delete(options.BaseURL+"/users/{id}", wrapper.DeleteUser)
 	})
 	r.Group(func(r chi.Router) {
@@ -428,13 +454,13 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xSwY7UMAz9F8Mxs0FwyxEBAonDXuCy2kNoPF2jNg6JS1lV+XfkdAZ2oD3OXibW2O/5",
-	"+b0u0PGYOGKUAm6B0j3g6Fv5pWD+wHnUOmVOmIWwdXyP+shjQnBAUbDHDNVAwNJlSkIcnwwUyRR77Uc/",
-	"4kajGsj4Y6KMAdzdOmXalkvKe3NG8rfv2AlUhVI8Mrg4DYMBThh9InDw5ubVzWswkLw8NNFWf3oUffQY",
-	"r5SfAjj4yCPertsylsSx6JlKqPR2KpjLLlhd+kxFdggMJC4bsFsuolBYT8cibzk86lzHUTA2iE9poK6B",
-	"7K/DPM+HI+fxMOUBY8dB3TonptXLjEdw8ML+jdSe8rR/wqx1tXvnTrtQqEoWcEDB/4W/a/+fpCef/YjS",
-	"/LlbgCK4ZjicowYKYJ5I/Df4+y3Hdn0+eXydrWnaimmSK5566brFQLL7nb0P9IxSfhLOu1K+Es7XlFLr",
-	"7wAAAP//D29eB5YEAAA=",
+	"H4sIAAAAAAAC/7xSwY7UMAz9F8Mxs0FwyxEBAgmhvcBltYfQeGaN2jgkLmVV5d+R05lhB1puw6WJGr9n",
+	"v/c8Q8dD4ohRCrgZSveAg2/XzwXzO86D3lPmhFkI24s/oB7ymBAcUBQ8YIZqIGDpMiUhjk8KimSKB32P",
+	"fsCVh2og4/eRMgZwd0uVaV0uKe/NCclfv2EnUBVKcc/g4tj3Bjhh9InAwaubFzcvwUDy8tCGtvo5oOih",
+	"YrxSfgjg4D0PeLt0y1gSx6IylVDp7Vgwl02wuvSRimwQGEhcVmC3XEShsEjHIq85PGpdx1EwNohPqaeu",
+	"gezP3TRNuz3nYTfmHmPHQd06Jaa35xn34OCZ/R2pPeZpz2HWuti9odNGnDa1fsLpPPMWfqZQFRmwR8G/",
+	"Od60/0ea5LMfUJq/dzNQBNcCg9OqAAUwTyT+uTj3a45v5nTM6Dpd07gW8yhXlHrpusVAspnd20D/cZQf",
+	"9I81+kLnPbrKKLX+CgAA//9UNF271gQAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

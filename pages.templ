@@ -18,6 +18,7 @@ templ usersListPage(users []*User) {
 			for _, u := range users {
 				@userLink(u)
 			}
+			<a href={ templ.SafeURL("/users/new") }>NEW</a>
 		</div>
 	}
 }
@@ -34,11 +35,16 @@ templ userPage(user *User, userExists bool) {
 	}
 }
 
-templ editUserPage(user *User, userExists bool) {
-	@baseLayout("user") {
+templ editUserPage(user *User, editUser, newUser bool) {
+	@baseLayout("edit user") {
 		<div id="edit-page" hx-swap="outerHTML">
-			if userExists {
-				@userForm(user)
+			if editUser {
+				<h1>EDIT</h1>
+				<div>{ user.ID }</div>
+				@userForm(user, true)
+			} else if newUser {
+				<h1>NEW</h1>
+				@userForm(&User{}, false)
 			} else {
 				@userNotFound()
 			}
@@ -71,25 +77,34 @@ templ userView(user *User) {
 	</div>
 }
 
-templ userForm(user *User) {
+templ userForm(user *User, existingUser bool) {
 	<div id="user-form">
-		<h1>EDIT</h1>
-		<div>{ user.ID }</div>
 		<form hx-target="#user-form" hx-get={ fmt.Sprintf("/users/%s/view", user.ID) }>
 			<div><input name="name" value={ user.Name }/></div>
 			<div><input name="description" value={ user.Description }/></div>
 			<div><input name="age" value={ fmt.Sprintf("%d", user.Age) }/></div>
 			<div>
-				<button class="btn btn-danger" hx-get={ fmt.Sprintf("/users/%s/view", user.ID) }>
-					Cancel
-				</button>
-				<button
- 					class="btn btn-danger"
- 					hx-put={ fmt.Sprintf("/users/%s", user.ID) }
- 					hx-target="#edit-page"
-				>
-					Save
-				</button>
+				if existingUser {
+					<button class="btn btn-danger" hx-get={ fmt.Sprintf("/users/%s/view", user.ID) }>
+						Cancel
+					</button>
+					<button
+ 						class="btn btn-danger"
+ 						hx-put={ fmt.Sprintf("/users/%s", user.ID) }
+ 						hx-target="#edit-page"
+					>
+						Save
+					</button>
+				} else {
+					<a href={ templ.SafeURL("/users") }>Cancel</a>
+					<button
+ 						class="btn btn-danger"
+ 						hx-post="/users"
+ 						hx-target="#edit-page"
+					>
+						Save
+					</button>
+				}
 			</div>
 		</form>
 	</div>

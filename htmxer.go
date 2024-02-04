@@ -74,8 +74,8 @@ func (s Server) UserPage(w http.ResponseWriter, r *http.Request, id string) {
 
 // (GET /users/{id}/edit)
 func (s Server) EditUser(w http.ResponseWriter, r *http.Request, id string) {
-	user, ok := s.Users[id]
-	templ.Handler(editUserPage(user, ok)).ServeHTTP(w, r)
+	user, userExists := s.Users[id]
+	templ.Handler(editUserPage(user, userExists, false)).ServeHTTP(w, r)
 }
 
 // (DELETE /users/{id})
@@ -116,6 +116,11 @@ func (s Server) ViewUser(w http.ResponseWriter, r *http.Request, id string) {
 		return
 	}
 	templ.Handler(userView(user)).ServeHTTP(w, r)
+}
+
+// (GET /users/{id}/view)
+func (s Server) NewUser(w http.ResponseWriter, r *http.Request) {
+	templ.Handler(editUserPage(nil, false, true)).ServeHTTP(w, r)
 }
 
 func parseUserForm(r *http.Request) (*UserForm, error) {
