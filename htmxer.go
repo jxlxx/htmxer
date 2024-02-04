@@ -81,8 +81,7 @@ func (s Server) EditUser(w http.ResponseWriter, r *http.Request, id string) {
 // (DELETE /users/{id})
 func (s *Server) DeleteUser(w http.ResponseWriter, r *http.Request, id string) {
 	delete(s.Users, id)
-	users := maps.Values(s.Users)
-	templ.Handler(usersListPage(users)).ServeHTTP(w, r)
+	templ.Handler(userDeleted()).ServeHTTP(w, r)
 }
 
 // (POST /users/{id})
