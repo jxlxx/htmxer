@@ -12,7 +12,7 @@ tasks:
       - task --list-all
   
   gen:
-    deps: [api, templ, vendor]
+    deps: [api, templ]
   
   api:
     cmds:
