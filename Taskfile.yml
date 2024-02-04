@@ -7,12 +7,16 @@ env:
   HTMX_VERSION: "1.9.10"
 
 tasks:
+  ls:
+    cmds:
+      - task --list-all
+  
   gen:
     deps: [api, templ, vendor]
   
   api:
     cmds:
-      - oapi-codegen -generate chi-server,spec,types -package htmxer openapi.yaml > server.gen.go
+      - oapi-codegen -generate chi-server,types,spec -package htmxer openapi.yaml > server.gen.go
     sources:
       - openapi.yaml
     generates:

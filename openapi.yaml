@@ -47,6 +47,15 @@ paths:
           in: path
           schema:
             type: string
+
+  /users/{id}/view:
+    get:
+      operationId: ViewUser
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
 components:
   schemas:
     UserForm:

@@ -1,5 +1,7 @@
 !.ignore
-!.gitignore
+.gitignore
 !.goreleaser.yaml
-!.air.toml
+.air.toml
 *_templ.go
+static
+go.sum

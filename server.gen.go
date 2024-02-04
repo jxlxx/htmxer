@@ -51,6 +51,9 @@ type ServerInterface interface {
 
 	// (GET /users/{id}/edit)
 	EditUser(w http.ResponseWriter, r *http.Request, id string)
+
+	// (GET /users/{id}/view)
+	ViewUser(w http.ResponseWriter, r *http.Request, id string)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -89,6 +92,11 @@ func (_ Unimplemented) PutUser(w http.ResponseWriter, r *http.Request, id string
 
 // (GET /users/{id}/edit)
 func (_ Unimplemented) EditUser(w http.ResponseWriter, r *http.Request, id string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /users/{id}/view)
+func (_ Unimplemented) ViewUser(w http.ResponseWriter, r *http.Request, id string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -250,6 +258,32 @@ func (siw *ServerInterfaceWrapper) EditUser(w http.ResponseWriter, r *http.Reque
 	handler.ServeHTTP(w, r.WithContext(ctx))
 }
 
+// ViewUser operation middleware
+func (siw *ServerInterfaceWrapper) ViewUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ViewUser(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -384,6 +418,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/users/{id}/edit", wrapper.EditUser)
 	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/users/{id}/view", wrapper.ViewUser)
+	})
 
 	return r
 }
@@ -391,13 +428,13 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7RSwW7bMAz9F25HJRq2m47DNmzADrn0FOSgWoyjwhZViUYaGPr3gnLSJq19zCUiQr5H",
-	"vvc8QkN9pICBM5gRcnPA3tbyIWP6Q6mXOiaKmNhj7dgW5eFTRDDgA2OLCYoCh7lJPrKncDWQOfnQSj/Y",
-	"HmcaRUHC58EndGC205SqW24pd+qCpMcnbBiKQH3YE5gwdJ0Cihhs9GDgx/rb+jsoiJYP9WgtPy2yPCLG",
-	"CuU/Bwb+Uo+baVvCHClkkSmEQq+HjCkvgsWl/z7zAoGCSHkGtqHMAoVJOmb+Se4kcw0FxlAhNsbONxWk",
-	"X1bH43G1p9SvhtRhaMiJW5fEpPqacA8Gvuj3SPU5T/0WZimT3Qs69ehdETKHHTJ+PvxX/f98erTJ9sjV",
-	"n+0IPoCphsMlavAO1NWJH4PfzTm26PPZ4/tsjcNcTAPfUeqt6xqd58Xv7Lfzdz2llNcAAAD//2Mv7asL",
-	"BAAA",
+	"H4sIAAAAAAAC/7xSwY7UMAz9F8Mxs0FwyxEBAonDXuCy2kNoPF2jNg6JS1lV+XfkdAZ2oD3OXibW2O/5",
+	"+b0u0PGYOGKUAm6B0j3g6Fv5pWD+wHnUOmVOmIWwdXyP+shjQnBAUbDHDNVAwNJlSkIcnwwUyRR77Uc/",
+	"4kajGsj4Y6KMAdzdOmXalkvKe3NG8rfv2AlUhVI8Mrg4DYMBThh9InDw5ubVzWswkLw8NNFWf3oUffQY",
+	"r5SfAjj4yCPertsylsSx6JlKqPR2KpjLLlhd+kxFdggMJC4bsFsuolBYT8cibzk86lzHUTA2iE9poK6B",
+	"7K/DPM+HI+fxMOUBY8dB3TonptXLjEdw8ML+jdSe8rR/wqx1tXvnTrtQqEoWcEDB/4W/a/+fpCef/YjS",
+	"/LlbgCK4ZjicowYKYJ5I/Df4+y3Hdn0+eXydrWnaimmSK5566brFQLL7nb0P9IxSfhLOu1K+Es7XlFLr",
+	"7wAAAP//D29eB5YEAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
