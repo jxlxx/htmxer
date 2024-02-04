@@ -5,10 +5,8 @@ templ baseLayout(title string) {
 		<head>
 			<title>HTMXer | { title } </title>
 			<script src="/static/htmx.js"></script>
-			<script src="/static/tailwind.js"></script>
-			<link href="/static/site.css" rel="stylesheet"/>
 		</head>
-		<body class="ml-40 mr-40">
+		<body>
 			@header()
 			{ children... }
 			@footer()
