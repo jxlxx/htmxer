@@ -15,13 +15,42 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
+	"github.com/oapi-codegen/runtime"
 )
+
+// UserForm defines model for UserForm.
+type UserForm struct {
+	Age         int    `json:"age"`
+	Description string `json:"description"`
+	Name        string `json:"name"`
+}
+
+// PostUserFormdataRequestBody defines body for PostUser for application/x-www-form-urlencoded ContentType.
+type PostUserFormdataRequestBody = UserForm
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
 	// (GET /)
 	HomePage(w http.ResponseWriter, r *http.Request)
+
+	// (GET /users)
+	UserListPage(w http.ResponseWriter, r *http.Request)
+
+	// (POST /users)
+	PostUser(w http.ResponseWriter, r *http.Request)
+
+	// (DELETE /users/{id})
+	DeleteUser(w http.ResponseWriter, r *http.Request, id string)
+
+	// (GET /users/{id})
+	UserPage(w http.ResponseWriter, r *http.Request, id string)
+
+	// (PUT /users/{id})
+	PutUser(w http.ResponseWriter, r *http.Request, id string)
+
+	// (GET /users/{id}/edit)
+	EditUser(w http.ResponseWriter, r *http.Request, id string)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -30,6 +59,36 @@ type Unimplemented struct{}
 
 // (GET /)
 func (_ Unimplemented) HomePage(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /users)
+func (_ Unimplemented) UserListPage(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /users)
+func (_ Unimplemented) PostUser(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (DELETE /users/{id})
+func (_ Unimplemented) DeleteUser(w http.ResponseWriter, r *http.Request, id string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /users/{id})
+func (_ Unimplemented) UserPage(w http.ResponseWriter, r *http.Request, id string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (PUT /users/{id})
+func (_ Unimplemented) PutUser(w http.ResponseWriter, r *http.Request, id string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (GET /users/{id}/edit)
+func (_ Unimplemented) EditUser(w http.ResponseWriter, r *http.Request, id string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -48,6 +107,140 @@ func (siw *ServerInterfaceWrapper) HomePage(w http.ResponseWriter, r *http.Reque
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.HomePage(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UserListPage operation middleware
+func (siw *ServerInterfaceWrapper) UserListPage(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UserListPage(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostUser operation middleware
+func (siw *ServerInterfaceWrapper) PostUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostUser(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteUser operation middleware
+func (siw *ServerInterfaceWrapper) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteUser(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// UserPage operation middleware
+func (siw *ServerInterfaceWrapper) UserPage(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UserPage(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PutUser operation middleware
+func (siw *ServerInterfaceWrapper) PutUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PutUser(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// EditUser operation middleware
+func (siw *ServerInterfaceWrapper) EditUser(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id string
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, chi.URLParam(r, "id"), &id)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.EditUser(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -173,6 +366,24 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/", wrapper.HomePage)
 	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/users", wrapper.UserListPage)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/users", wrapper.PostUser)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/users/{id}", wrapper.DeleteUser)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/users/{id}", wrapper.UserPage)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/users/{id}", wrapper.PutUser)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/users/{id}/edit", wrapper.EditUser)
+	})
 
 	return r
 }
@@ -180,8 +391,13 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/ySMMQ7CMBAE/7K1FRB0fgF0fMGCJVhKbk+xqaz7O7JoZprRDDy1u4zWG/KIhGpvIdt3",
-	"2xLktOIVGdflvFyQ4KV/ZojTxMo+JedRepXdX8i4aeejrETCweayxvYfRkT8AgAA//8pTCiacQAAAA==",
+	"H4sIAAAAAAAC/7RSwW7bMAz9F25HJRq2m47DNmzADrn0FOSgWoyjwhZViUYaGPr3gnLSJq19zCUiQr5H",
+	"vvc8QkN9pICBM5gRcnPA3tbyIWP6Q6mXOiaKmNhj7dgW5eFTRDDgA2OLCYoCh7lJPrKncDWQOfnQSj/Y",
+	"HmcaRUHC58EndGC205SqW24pd+qCpMcnbBiKQH3YE5gwdJ0Cihhs9GDgx/rb+jsoiJYP9WgtPy2yPCLG",
+	"CuU/Bwb+Uo+baVvCHClkkSmEQq+HjCkvgsWl/z7zAoGCSHkGtqHMAoVJOmb+Se4kcw0FxlAhNsbONxWk",
+	"X1bH43G1p9SvhtRhaMiJW5fEpPqacA8Gvuj3SPU5T/0WZimT3Qs69ehdETKHHTJ+PvxX/f98erTJ9sjV",
+	"n+0IPoCphsMlavAO1NWJH4PfzTm26PPZ4/tsjcNcTAPfUeqt6xqd58Xv7Lfzdz2llNcAAAD//2Mv7asL",
+	"BAAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

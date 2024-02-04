@@ -1,11 +1,64 @@
 openapi: '3.0.2'
 
-
 paths:
   /:
     get: 
       operationId: HomePage
+      
+  /users:
+    get: 
+      operationId: UserListPage
+    post: 
+      operationId: PostUser
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserForm'
 
-    
+  /users/{id}:
+    get: 
+      operationId: UserPage
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+    put: 
+      operationId: PutUser
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+    delete: 
+      operationId: DeleteUser
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+
+  /users/{id}/edit:
+    get: 
+      operationId: EditUser
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
 components:
   schemas:
+    UserForm:
+      type: object
+      properties:
+        name:
+          type: string  
+        age:
+          type: integer  
+        description:
+          type: string
+      required:
+        - name
+        - age
+        - description

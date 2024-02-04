@@ -9,6 +9,7 @@ env:
 tasks:
   gen:
     deps: [api, templ, vendor]
+  
   api:
     cmds:
       - oapi-codegen -generate chi-server,spec,types -package htmxer openapi.yaml > server.gen.go

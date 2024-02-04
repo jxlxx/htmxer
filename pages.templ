@@ -1,6 +1,8 @@
 package htmxer
 
 import (
+  "fmt"
+
 )
 
 
@@ -14,4 +16,72 @@ templ homePage(){
   }
 }
 
+templ usersListPage(users []User){
+  @baseLayout("pages") {
+    <div>
+      for _, u := range users {
+        @userLink(u)
+      }
+  </div> 
+  }
+}
+
+templ userPage(user User, userExists bool){
+  @baseLayout("user") {
+   <div>
+    if userExists {
+      @userView(user)
+    } else {
+      @userNotFound()
+    }
+   </div> 
+  }
+}
+
+templ editUserPage(user User, userExists bool){
+  @baseLayout("user") {
+   <div>
+    if userExists {
+      @userForm(user)
+    } else {
+      @userNotFound()
+    }
+   </div> 
+  }
+}
+
+templ userNotFound() {
+  <div>
+    404 user not found
+  </div>
+}
+
+templ userLink(user User) {
+  <div>
+    <a href={ templ.SafeURL(fmt.Sprintf("/users/%s", user.ID)) }>{ user.Name }</a>
+  </div>
+}
+
+templ userView(user User) {
+  <div>
+    <h1>VIEW</h1>
+    <div>{ user.ID }</div>
+    <div>{ user.Name }</div>
+    <div>{ user.Description }</div>
+    <div>{ fmt.Sprintf("%d", user.Age) }</div>
+    <div>
+      <a href={ templ.SafeURL(fmt.Sprintf("/users/%s/edit", user.ID)) }>edit</a>
+    </div>
+  </div>
+}
+
+templ userForm(user User) {
+  <div>
+    <h1>EDIT</h1>
+    <div>{ user.ID }</div>
+    <div>{ user.Name }</div>
+    <div>{ user.Description }</div>
+    <div>{ fmt.Sprintf("%d", user.Age) }</div>
+  </div>
+}
 
