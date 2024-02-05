@@ -32,7 +32,12 @@ tasks:
       
   run:
     cmds: 
-      - air
+      - go run cmd/main.go
+
+  air:
+    deps: [gen]
+    cmds: 
+      - go build -o ./.tmp/main cmd/main.go
 
   vendor:
     cmds:

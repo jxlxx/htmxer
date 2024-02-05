@@ -5,12 +5,12 @@ tmp_dir = ".tmp"
 [build]
   args_bin = []
   bin = "./.tmp/main"
-  cmd = "task gen; go build -o ./.tmp/main cmd/main.go"
+  cmd = "task air"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata"]
   exclude_file = []
   exclude_regex = ["_test.go"]
-  exclude_unchanged = false
+  exclude_unchanged = true
   follow_symlink = false
   full_bin = ""
   include_dir = []
