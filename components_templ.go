@@ -189,7 +189,7 @@ func usersListPage(users []*User) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col items-center \"><a class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\" href=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col items-center\"><a class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded\" href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -246,7 +246,7 @@ func userPage(user *User, userExists bool) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"user-page\" hx-swap=\"outerHTML\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"user-page\" hx-swap=\"innerHTML\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -300,7 +300,7 @@ func editUserPage(user *User, editUser, newUser bool) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"edit-page\" hx-swap=\"outerHTML\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"user-page\" hx-swap=\"innerHTML\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -329,7 +329,7 @@ func editUserPage(user *User, editUser, newUser bool) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = baseLayout("edit user").Render(templ.WithChildren(templ_7745c5c3_Ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = baseLayout("edit").Render(templ.WithChildren(templ_7745c5c3_Ctx, templ_7745c5c3_Var17), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -578,7 +578,7 @@ func userView(user *User) templ.Component {
 			templ_7745c5c3_Var38 = templ.NopComponent
 		}
 		templ_7745c5c3_Ctx = templ.ClearChildren(templ_7745c5c3_Ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><div class=\"w-full max-w-sm\"><div class=\"md:flex md:items-center mb-6\"><div class=\"md:w-1/3\"><div class=\"block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-full max-w-sm\"><div class=\"md:flex md:items-center mb-6\"><div class=\"md:w-1/3\"><div class=\"block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -640,7 +640,7 @@ func userView(user *User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#user-page\" hx-push-url=\"true\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#user-page\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -667,7 +667,7 @@ func userView(user *User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div></div></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -691,7 +691,7 @@ func userForm(user *User, existingUser bool) templ.Component {
 			templ_7745c5c3_Var48 = templ.NopComponent
 		}
 		templ_7745c5c3_Ctx = templ.ClearChildren(templ_7745c5c3_Ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"user-form\"><form class=\"w-full max-w-sm\"><div class=\"md:flex md:items-center mb-6\"><div class=\"md:w-1/3\"><label class=\"block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4\" for=\"name\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form class=\"w-full max-w-sm\"><div class=\"md:flex md:items-center mb-6\"><div class=\"md:w-1/3\"><label class=\"block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4\" for=\"name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -755,7 +755,7 @@ func userForm(user *User, existingUser bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#edit-page\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#user-page\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -772,7 +772,7 @@ func userForm(user *User, existingUser bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#edit-page\" hx-push-url=\"true\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#user-page\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -804,7 +804,7 @@ func userForm(user *User, existingUser bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <button class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r\" hx-post=\"/users\" hx-target=\"#edit-page\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a> <button class=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r\" hx-post=\"/users\" hx-target=\"#user-page\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -818,7 +818,7 @@ func userForm(user *User, existingUser bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
